@@ -1,1 +1,3 @@
-# rami-gaggi-blog
+# Blog
+
+Simple blog for personal purpose.
