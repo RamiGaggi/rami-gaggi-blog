@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from app import app, db, messages
-from app.forms import EditProfileForm, LoginForm, RegistrationForm
+from app.forms import EditProfileForm, EmptyForm, LoginForm, RegistrationForm
+from app.misc import redirect_to
 from app.models import User
 from flask import flash, redirect, render_template, request
 from flask.helpers import url_for
@@ -33,7 +34,7 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect_to('index')
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -41,7 +42,7 @@ def login():
 
         if user is None or not user.check_password(form.password.data):
             flash(messages.LOGIN_EROOR)
-            return redirect(url_for('login'))
+            return redirect_to('login')
 
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -57,17 +58,18 @@ def login():
 @app.route('/logout')
 def logout():
     if current_user.is_anonymous:
-        return redirect(url_for('index'))
+        return redirect_to('index')
 
     logout_user()
     flash(messages.LOGOUT)
-    return redirect(url_for('index'))
+    return redirect_to('index')
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect_to('index')
+
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
@@ -75,7 +77,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
-        return redirect(url_for('login'))
+        return redirect_to('login')
     return render_template('register.html', title='Register', form=form)
 
 
@@ -99,8 +101,48 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('edit_profile'))
+        return redirect_to('edit_profile')
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile', form=form)
+
+
+@app.route('/follow/<username>', methods=['POST'])
+@login_required
+def follow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()  # noqa: WPS442
+        if user is None:
+            flash(f'User {username} not found.')
+            return redirect_to('index')
+        if user == current_user:
+            flash('You cannot follow yourself!')
+            return redirect(url_for('user', username=username))
+        current_user.follow(user)
+        db.session.commit()
+        flash(f'You are following {username}!')
+        return redirect_to('user', username=username)
+    return redirect_to('index')
+
+
+@app.route('/unfollow/<username>', methods=['POST'])
+@login_required
+def unfollow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=username).first()  # noqa: WPS442
+        if user is None:
+            flash('User {username} not found.')
+            return redirect_to('index')
+
+        if user == current_user:
+            flash('You cannot unfollow yourself!')
+            return redirect_to('user', username=username)
+
+        current_user.unfollow(user)
+        db.session.commit()
+        flash('You are not following {username}.')
+        return redirect_to('user', username=username)
+    return redirect_to('index')
