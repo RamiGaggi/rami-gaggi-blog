@@ -1,9 +1,9 @@
 from datetime import datetime
 
 from app import app, db, messages
-from app.forms import EditProfileForm, EmptyForm, LoginForm, RegistrationForm
-from app.misc import redirect_to
-from app.models import User
+from app.forms import EditProfileForm, EmptyForm, LoginForm, PostForm, RegistrationForm
+from app.misc import generate_next_url_for, generate_previous_url_for, redirect_to
+from app.models import Post, User
 from flask import flash, redirect, render_template, request
 from flask.helpers import url_for
 from flask_login import current_user, login_required, login_user, logout_user
@@ -17,18 +17,34 @@ def before_request():
         db.session.commit()
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    posts = [
-        {
-            'author': {'username': 'John', 'avatar': current_user.avatar},
-            'body': 'Beautiful day in Portland!',
-        },
-    ]
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return redirect_to('index')
 
-    return render_template('index.html', title='Home', posts=posts)
+    page = request.args.get('page', 1, type=int)
+    posts = current_user.followed_posts().paginate(
+        page=page,
+        per_page=app.config['POSTS_PER_PAGE'],
+        error_out=False,
+    )
+    next_url = generate_next_url_for('index', posts)
+    prev_url = generate_previous_url_for('index', posts)
+    return render_template(
+        'index.html',
+        title='Home Page',
+        form=form,
+        posts=posts.items,
+        next_url=next_url,
+        prev_url=prev_url,
+    )
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -84,12 +100,24 @@ def register():
 @app.route('/user/<username>')
 @login_required
 def user(username):
+    form = EmptyForm()
     user = User.query.filter_by(username=username).first_or_404()  # noqa: WPS442
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'},
-    ]
-    return render_template('user.html', user=user, posts=posts)
+    page = request.args.get('page', 1, type=int)
+    posts = user.posts.paginate(
+        page=page,
+        per_page=app.config['POSTS_PER_PAGE'],
+        error_out=False,
+    )
+    next_url = generate_next_url_for('user', posts, username=username)
+    prev_url = generate_previous_url_for('user', posts, username=username)
+    return render_template(
+        'user.html',
+        user=user,
+        posts=posts.items,
+        form=form,
+        next_url=next_url,
+        prev_url=prev_url,
+    )
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -143,6 +171,26 @@ def unfollow(username):
 
         current_user.unfollow(user)
         db.session.commit()
-        flash('You are not following {username}.')
+        flash(f'You are not following {username}.')
         return redirect_to('user', username=username)
     return redirect_to('index')
+
+
+@app.route('/explore')
+@login_required
+def explore():
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page,
+        per_page=app.config['POSTS_PER_PAGE'],
+        error_out=False,
+    )
+    next_url = generate_next_url_for('explore', posts)
+    prev_url = generate_previous_url_for('explore', posts)
+    return render_template(
+        'index.html',
+        title='Explore',
+        posts=posts.items,
+        next_url=next_url,
+        prev_url=prev_url,
+    )

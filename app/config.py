@@ -21,3 +21,5 @@ class Config():
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     RECIPIENTS = os.environ.get('RECIPIENTS', ',').split(',')
+
+    POSTS_PER_PAGE = 25
