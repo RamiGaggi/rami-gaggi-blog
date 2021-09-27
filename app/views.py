@@ -2,7 +2,7 @@ from datetime import datetime
 
 from app import app, db, messages
 from app.forms import EditProfileForm, EmptyForm, LoginForm, PostForm, RegistrationForm
-from app.misc import generate_next_url_for, generate_previous_url_for, redirect_to
+from app.misc import get_next_url_for_posts, get_previous_url_for_posts, redirect_to
 from app.models import Post, User
 from flask import flash, redirect, render_template, request
 from flask.helpers import url_for
@@ -35,8 +35,8 @@ def index():
         per_page=app.config['POSTS_PER_PAGE'],
         error_out=False,
     )
-    next_url = generate_next_url_for('index', posts)
-    prev_url = generate_previous_url_for('index', posts)
+    next_url = get_next_url_for_posts('index', posts)
+    prev_url = get_previous_url_for_posts('index', posts)
     return render_template(
         'index.html',
         title='Home Page',
@@ -108,8 +108,8 @@ def user(username):
         per_page=app.config['POSTS_PER_PAGE'],
         error_out=False,
     )
-    next_url = generate_next_url_for('user', posts, username=username)
-    prev_url = generate_previous_url_for('user', posts, username=username)
+    next_url = get_next_url_for_posts('user', posts, username=username)
+    prev_url = get_previous_url_for_posts('user', posts, username=username)
     return render_template(
         'user.html',
         user=user,
@@ -185,8 +185,8 @@ def explore():
         per_page=app.config['POSTS_PER_PAGE'],
         error_out=False,
     )
-    next_url = generate_next_url_for('explore', posts)
-    prev_url = generate_previous_url_for('explore', posts)
+    next_url = get_next_url_for_posts('explore', posts)
+    prev_url = get_previous_url_for_posts('explore', posts)
     return render_template(
         'index.html',
         title='Explore',
