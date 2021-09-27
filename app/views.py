@@ -1,8 +1,21 @@
 from datetime import datetime
 
 from app import app, db, messages
-from app.forms import EditProfileForm, EmptyForm, LoginForm, PostForm, RegistrationForm
-from app.misc import get_next_url_for_posts, get_previous_url_for_posts, redirect_to
+from app.forms import (
+    EditProfileForm,
+    EmptyForm,
+    LoginForm,
+    PostForm,
+    RegistrationForm,
+    ResetPasswordForm,
+    ResetPasswordRequestForm,
+)
+from app.misc import (
+    get_next_url_for_posts,
+    get_previous_url_for_posts,
+    redirect_to,
+    send_password_reset_email,
+)
 from app.models import Post, User
 from flask import flash, redirect, render_template, request
 from flask.helpers import url_for
@@ -194,3 +207,33 @@ def explore():
         next_url=next_url,
         prev_url=prev_url,
     )
+
+
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()  # noqa: WPS442
+        if user:
+            send_password_reset_email(user)
+        flash('Check your email for the instructions to reset your password')
+        return redirect_to('login')
+    return render_template('reset_password_request.html', title='Reset Password', form=form)
+
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect_to('index')
+    user = User.verify_reset_password_token(token)  # noqa: WPS442
+    if not user:
+        return redirect_to('index')
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password has been reset.')
+        return redirect_to('login')
+    return render_template('reset_password.html', form=form)
