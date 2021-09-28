@@ -1,38 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        {% if title %}
-            <title>{{ title }} - Microblog</title>
-        {% else %}
-            <title>Welcome to Microblog!</title>
-        {% endif %}
-    </head>
+
+    {% block  head %}
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+            {% block title %}
+                <title>{% if title %}{{ title }} - RGBlog{% else %}Welcome to RGBlog!{% endif %}</title>
+            {% endblock %}
+
+            {% block styles %}
+                {{ bootstrap.load_css() }}
+            {% endblock %}
+        </head>
+    {% endblock head %}
     <body>
-    <div>
-        Microblog:
-        <a href="{{ url_for('index') }}">Home</a>
-        {% if current_user.is_anonymous %}
-            <a href="{{ url_for('login') }}">Login</a>
-        {% else %}
-            <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-            <a href="{{ url_for('explore') }}">Explore</a>
-        {% endif %}
-    </div>
-        <hr>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul>
+
+    {% block navbar %}
+        {% include "_navbar.html" %}
+    {% endblock navbar%}
+
+    {% block content %}
+        <div class="container">
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
                     {% for message in messages %}
-                    <li>{{ message }}</li>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                          {{ message }}
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
                     {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-        <hr>
-        {% block content %}{% endblock %}
+                {% endif %}
+            {% endwith %}
+
+            {% block app_content_before %}{% endblock %}
+
+            {% block app_content %}{% endblock %}
+
+            {% block app_content_after %}{% endblock %}
+            
+            <scripts>
+                {{ bootstrap.load_js() }}
+                {% block scripts %}{% endblock scripts%}
+            </scripts>
+
+    {% endblock content %}
+
+        </div>
     </body>
 </html>

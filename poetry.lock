@@ -67,6 +67,21 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "bootstrap-flask"
+version = "1.8.0"
+description = "Bootstrap helper for Flask/Jinja2."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Flask = "*"
+
+[package.extras]
+dev = ["coverage", "tox", "sphinx", "pallets-sphinx-themes", "sphinxcontrib-log-cabinet"]
+docs = ["sphinx", "pallets-sphinx-themes", "sphinxcontrib-log-cabinet"]
+
+[[package]]
 name = "click"
 version = "8.0.1"
 description = "Composable command line interface toolkit"
@@ -850,7 +865,7 @@ locale = ["Babel (>=1.3)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "856a62ff185853d2daa733aa792953456fd668bd318a0c6149d8584730c87004"
+content-hash = "bc2f8d61f7b16494fc77e9a90c2b780932f577a9a82078e8c3a050cb98ddc634"
 
 [metadata.files]
 alembic = [
@@ -875,6 +890,10 @@ bandit = [
 ]
 blinker = [
     {file = "blinker-1.4.tar.gz", hash = "sha256:471aee25f3992bd325afa3772f1063dbdbbca947a041b8b89466dc00d606f8b6"},
+]
+bootstrap-flask = [
+    {file = "Bootstrap-Flask-1.8.0.tar.gz", hash = "sha256:1c47a35b26b2ea2eaa0326b416c557aee77c7802f188055a8cfc4520a5cfdba2"},
+    {file = "Bootstrap_Flask-1.8.0-py2.py3-none-any.whl", hash = "sha256:74a333756e997f2bb7d2d39a080eb2d1b4fd9da225f6cd5b56f0488ae5fe48ed"},
 ]
 click = [
     {file = "click-8.0.1-py3-none-any.whl", hash = "sha256:fba402a4a47334742d782209a7c79bc448911afe1149d07bdabdf480b3e2f4b6"},
