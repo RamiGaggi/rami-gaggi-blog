@@ -10,12 +10,7 @@ from app.forms import (
     ResetPasswordForm,
     ResetPasswordRequestForm,
 )
-from app.misc import (
-    get_next_url_for_posts,
-    get_previous_url_for_posts,
-    redirect_to,
-    send_password_reset_email,
-)
+from app.misc import redirect_to, send_password_reset_email
 from app.models import Post, User
 from flask import flash, redirect, render_template, request
 from flask.helpers import url_for
@@ -32,15 +27,31 @@ def before_request():
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
-@login_required
 def index():
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page,
+        per_page=app.config['POSTS_PER_PAGE'],
+        error_out=False,
+    )
+    return render_template(
+        'index.html',
+        title='Explore',
+        posts=posts.items,
+        pagination=posts,
+    )
+
+
+@app.route('/explore', methods=['GET', 'POST'])
+@login_required
+def explore():
     form = PostForm()
     if form.validate_on_submit():
         post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
-        return redirect_to('index')
+        return redirect_to('explore')
 
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(
@@ -48,15 +59,12 @@ def index():
         per_page=app.config['POSTS_PER_PAGE'],
         error_out=False,
     )
-    next_url = get_next_url_for_posts('index', posts)
-    prev_url = get_previous_url_for_posts('index', posts)
     return render_template(
         'index.html',
         title='Home Page',
         form=form,
         posts=posts.items,
-        next_url=next_url,
-        prev_url=prev_url,
+        pagination=posts,
     )
 
 
@@ -121,15 +129,13 @@ def user(username):
         per_page=app.config['POSTS_PER_PAGE'],
         error_out=False,
     )
-    next_url = get_next_url_for_posts('user', posts, username=username)
-    prev_url = get_previous_url_for_posts('user', posts, username=username)
+
     return render_template(
         'user.html',
         user=user,
         posts=posts.items,
         form=form,
-        next_url=next_url,
-        prev_url=prev_url,
+        pagination=posts,
     )
 
 
@@ -187,26 +193,6 @@ def unfollow(username):
         flash(f'You are not following {username}.')
         return redirect_to('user', username=username)
     return redirect_to('index')
-
-
-@app.route('/explore')
-@login_required
-def explore():
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page=page,
-        per_page=app.config['POSTS_PER_PAGE'],
-        error_out=False,
-    )
-    next_url = get_next_url_for_posts('explore', posts)
-    prev_url = get_previous_url_for_posts('explore', posts)
-    return render_template(
-        'index.html',
-        title='Explore',
-        posts=posts.items,
-        next_url=next_url,
-        prev_url=prev_url,
-    )
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
