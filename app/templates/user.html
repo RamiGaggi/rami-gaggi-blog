@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 {% block app_content %}
     <table>
         <tr valign="top">
@@ -9,19 +10,19 @@
                 <tr>{% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}</tr>
                 <tr><p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p></tr>
                 {% if user == current_user %}
-                    <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+                    <p><a class="badge badge-light" href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
                 {% elif current_user.is_following(user) %}
                     <tr><p>
                         <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
-                            {{ form.submit(value='Unfollow') }}
+                            {{ form.submit(value='Unfollow', class='btn btn-danger') }}
                         </form>
                     </p>
                 {% else %}
                     <p>
                         <form action="{{ url_for('follow', username=user.username) }}" method="post">
                             {{ form.hidden_tag() }}
-                            {{ form.submit(value='Follow') }}
+                            {{ form.submit(value='Follow', class='btn btn-primary') }}
                         </form>
                     </p>
             {% endif %}

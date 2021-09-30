@@ -35,7 +35,7 @@ class RegistrationForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Edit')
 
     def __init__(self, original_username, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -57,7 +57,7 @@ class PostForm(FlaskForm):
         'Write your post here',
         validators=[DataRequired(), Length(min=1, max=10000)],
     )
-    submit = SubmitField('Submit')
+    submit = SubmitField('Create Post')
 
 
 class ResetPasswordRequestForm(FlaskForm):
