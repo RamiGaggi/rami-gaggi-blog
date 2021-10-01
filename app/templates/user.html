@@ -2,32 +2,28 @@
 
 
 {% block app_content %}
-    <table>
-        <tr valign="top">
-            <tr><h1>User: {{ user.username }}</h1></tr>
-            <tr><img src="{{ user.avatar(128) }}"></tr>
-                <tr>{% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}</tr>
-                <tr>{% if user.last_seen %}<p>Last seen on: {{ user.last_seen }}</p>{% endif %}</tr>
-                <tr><p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p></tr>
-                {% if user == current_user %}
-                    <p><a class="badge badge-light" href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
-                {% elif current_user.is_following(user) %}
-                    <tr><p>
-                        <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
-                            {{ form.hidden_tag() }}
-                            {{ form.submit(value='Unfollow', class='btn btn-danger') }}
-                        </form>
-                    </p>
-                {% else %}
-                    <p>
-                        <form action="{{ url_for('follow', username=user.username) }}" method="post">
-                            {{ form.hidden_tag() }}
-                            {{ form.submit(value='Follow', class='btn btn-primary') }}
-                        </form>
-                    </p>
+    <div class="card" style="width: 100%%;">
+        <h1 class="mb-2">User: {{ user.username }}</h1>
+        <img style="width: 25%;" class="card-img-top ml-3" src="{{ user.avatar(128) }}" alt="avatar">
+        <div class="card-body">
+            {% if user.about_me %}<p class="card-text"><strong>About me: </strong>{{ user.about_me }}</p>{% endif %}
+            {% if user.last_seen %}<p class="card-text"><strong>Last seen on: </strong>{{ user.last_seen }}</p>{% endif %}
+                <p class="card-text"><strong>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</strong></p>
+            {% if user == current_user %}
+                  <p class="card-text"><a class="badge badge-light" href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+            {% elif current_user.is_following(user) %}
+                  <form action="{{ url_for('unfollow', username=user.username) }}" method="post">
+                      {{ form.hidden_tag() }}
+                      {{ form.submit(value='Unfollow', class='btn btn-danger') }}
+                  </form>
+            {% else %}
+              <form action="{{ url_for('follow', username=user.username) }}" method="post">
+                  {{ form.hidden_tag() }}
+                  {{ form.submit(value='Follow', class='btn btn-primary') }}
+              </form>
             {% endif %}
-        </tr>
-    </table>
+        </div>
+    </div>
     <hr>
     {% include '_post.html' %}
 {% endblock %}
