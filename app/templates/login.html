@@ -3,9 +3,7 @@
 
 {% block app_content %}
     <h1>Sign In</h1>
-    <form action="" method="post" >
         {{ render_form(form) }}
-    </form>
     <div class="card my-3">
         <div class="card-body">
             <p>New User? <a class="badge badge-light" href="{{ url_for('register') }}"> Click to Register!</a></p>

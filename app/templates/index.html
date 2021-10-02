@@ -11,9 +11,7 @@
     {% endif %}
 
     {% if form %}
-        <form action="" method="post">
-            {{ render_form(form) }}
-        </form>
+        {{ render_form(form) }}
     {% endif %}
 
     {% include '_post.html' %}
