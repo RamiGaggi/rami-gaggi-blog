@@ -9,14 +9,17 @@
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            {{ render_static('icon', 'img/favicon.svg') }}
 
             {% block title %}
                 <title>{% if title %}{{ title }} - RGBlog{% else %}Welcome to RGBlog!{% endif %}</title>
             {% endblock %}
-
+            
+        
             {% block styles %}
                 {{ bootstrap.load_css() }}
                 {{ render_static('css', 'css/style.css') }}
+                
             {% endblock %}
         </head>
     {% endblock head %}
