@@ -18,6 +18,7 @@ Flask-Mail = "^0.9.1"
 PyJWT = "^2.1.0"
 Bootstrap-Flask = "^1.8.0"
 Flask-Moment = "^1.0.2"
+Flask-Babel = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

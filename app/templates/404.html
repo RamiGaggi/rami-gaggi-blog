@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-    <h1>Page Not Found</h1>
+    <h1>{{ _("Page Not Found") }}</h1>
     <a class="btn btn-primary my-5" href="{{ url_for('index') }}">Back</a></p>
 {% endblock %}

@@ -5,9 +5,9 @@
 {% block app_content %}
     
     {% if  current_user.username %}
-        <h1>Hi, {{ current_user.username }}!</h1>
+        <h1>{{ _('Hi, %(username)s', username=current_user.username) }}!</h1>
     {% else %}
-        <h1>Hi, anon!</h1>
+        <h1>{{ _("Hi, anon") }}!</h1>
     {% endif %}
 
     {% if form %}

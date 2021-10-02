@@ -23,3 +23,5 @@ class Config():
     RECIPIENTS = os.environ.get('RECIPIENTS', ',').split(',')
 
     POSTS_PER_PAGE = 25
+
+    LANGUAGES = ['en', 'ru']

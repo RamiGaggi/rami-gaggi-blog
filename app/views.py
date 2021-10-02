@@ -14,6 +14,7 @@ from app.misc import redirect_to, send_password_reset_email
 from app.models import Post, User
 from flask import flash, redirect, render_template, request
 from flask.helpers import url_for
+from flask_babel import _
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.urls import url_parse
 
@@ -36,7 +37,7 @@ def index():
     )
     return render_template(
         'index.html',
-        title='Explore',
+        title=_('All posts'),
         posts=posts.items,
         pagination=posts,
     )
@@ -50,7 +51,7 @@ def explore():
         post = Post(body=form.post.data, author=current_user)
         db.session.add(post)
         db.session.commit()
-        flash('Your post is now live!')
+        flash(_('Your post is now live!'))
         return redirect_to('explore')
 
     page = request.args.get('page', 1, type=int)
@@ -61,7 +62,7 @@ def explore():
     )
     return render_template(
         'index.html',
-        title='Home Page',
+        title=_('My feed'),
         form=form,
         posts=posts.items,
         pagination=posts,
@@ -113,9 +114,9 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        flash(messages.REGISTER)
         return redirect_to('login')
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html', title=_('Register'), form=form)
 
 
 @app.route('/user/<username>')
@@ -147,12 +148,12 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash(messages.EDIT_PROFILE)
         return redirect_to('edit_profile')
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title='Edit Profile', form=form)
+    return render_template('edit_profile.html', title=_('Edit Profile'), form=form)
 
 
 @app.route('/follow/<username>', methods=['POST'])
@@ -162,14 +163,14 @@ def follow(username):
     if form.validate_on_submit():
         user = User.query.filter_by(username=username).first()  # noqa: WPS442
         if user is None:
-            flash(f'User {username} not found.')
+            flash(messages.USERNAME_NOT_FOUND(username))
             return redirect_to('index')
         if user == current_user:
-            flash('You cannot follow yourself!')
+            flash(messages.FOLLOW_YOURSELF)
             return redirect(url_for('user', username=username))
         current_user.follow(user)
         db.session.commit()
-        flash(f'You are following {username}!')
+        flash(messages.FOLLOW(username))
         return redirect_to('user', username=username)
     return redirect_to('index')
 
@@ -181,16 +182,16 @@ def unfollow(username):
     if form.validate_on_submit():
         user = User.query.filter_by(username=username).first()  # noqa: WPS442
         if user is None:
-            flash('User {username} not found.')
+            flash(messages.USERNAME_NOT_FOUND(username))
             return redirect_to('index')
 
         if user == current_user:
-            flash('You cannot unfollow yourself!')
+            flash(messages.UNFOLLOW_YOURSELF)
             return redirect_to('user', username=username)
 
         current_user.unfollow(user)
         db.session.commit()
-        flash(f'You are not following {username}.')
+        flash(messages.UNFOLLOW(username))
         return redirect_to('user', username=username)
     return redirect_to('index')
 
@@ -204,9 +205,9 @@ def reset_password_request():
         user = User.query.filter_by(email=form.email.data).first()  # noqa: WPS442
         if user:
             send_password_reset_email(user)
-        flash('Check your email for the instructions to reset your password')
+        flash(messages.RESET_PASSWORD_REQUEST)
         return redirect_to('login')
-    return render_template('reset_password_request.html', title='Reset Password', form=form)
+    return render_template('reset_password_request.html', title=_('Reset Password'), form=form)
 
 
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
@@ -220,6 +221,6 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash('Your password has been reset.')
+        flash(messages.RESET_PASSWORD)
         return redirect_to('login')
     return render_template('reset_password.html', form=form)
