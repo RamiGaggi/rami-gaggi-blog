@@ -19,11 +19,8 @@ migrations:
 migrate: migrations
 	@poetry run flask db upgrade;
 
-trans-gen:
-	@pybabel extract -F babel.cfg -k _l -o app/translations/messages.pot .;
-
-translate: trans-gen
-	@pybabel update -i app/translations/messages.pot -d app/translations -l ru
+update-translation:
+	@poetry run flask translate update;
 
 compile-translation: translate
-	@pybabel compile -d app/translations
+	@poetry run flask translate compile-translation;
