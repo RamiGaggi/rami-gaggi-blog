@@ -43,6 +43,7 @@
             <scripts>
                 {{ bootstrap.load_js() }}
                 {{ moment.include_moment() }}
+                {{ moment.lang(get_locale()) }}
                 {% block scripts %}{% endblock scripts%}
             </scripts>
 
