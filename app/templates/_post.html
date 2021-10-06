@@ -2,7 +2,7 @@
 
 <div class="container my-5">
     {% for post in posts %}
-    <table class="table table-hover ">
+    <table class="table table-hover my-3">
         <tr>
             <td width="70px">
                 <a href="{{ url_for('user', username=post.author.username) }}">
@@ -15,10 +15,24 @@
                 </a>
                 {{ moment(post.timestamp).fromNow() }}
                 <br>
-                {{ post.body }}
+                <span id="post{{ post.id }}">
+                    {{ post.body }}
+                </span>
             </td>
         </tr>
     </table>
+    {% if post.language and post.language != get_locale() %}
+
+        <span id="translation{{ post.id }}">
+            <a class="btn btn-outline-primary btn-sm mx-2 my-2" 
+            href="javascript:translate(
+                '#post{{ post.id }}',
+                '#translation{{ post.id }}',
+                '{{ post.language }}',
+                '{{ get_locale() }}'
+                );">{{ _('Translate') }}</a>
+        </span>
+    {% endif %}
     {% endfor %}
-    {{ render_pagination(pagination) }}
+        {{ render_pagination(pagination) }}
 </div>
