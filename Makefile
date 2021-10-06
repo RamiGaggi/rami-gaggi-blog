@@ -22,5 +22,5 @@ migrate: migrations
 update-translation:
 	@poetry run flask translate update;
 
-compile-translation: translate
+compile-translation: update-translation
 	@poetry run flask translate compile-translation;
