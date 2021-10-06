@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-03 16:54+0300\n"
+"POT-Creation-Date: 2021-10-06 21:50+0300\n"
 "PO-Revision-Date: 2021-10-02 17:18+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -47,7 +47,7 @@ msgstr "\"Эл. адрес, email\""
 msgid "Repeat Password"
 msgstr "Повторите пароль"
 
-#: app/forms.py:23 app/templates/register.html:4 app/views.py:119
+#: app/forms.py:23 app/templates/register.html:4 app/views.py:125
 msgid "Register"
 msgstr "Регистрация"
 
@@ -138,23 +138,31 @@ msgstr "Проверьте свой e-mail для"
 msgid "Your password has been reset"
 msgstr "Ваш пароль был сброшен"
 
-#: app/views.py:40
+#: app/translate.py:8
+msgid "Error: the translation service is not configured."
+msgstr "Ошибка: сервис не настроен"
+
+#: app/translate.py:20
+msgid "Error: the translation service failed."
+msgstr "Ошибка: попытка перевода не удалась"
+
+#: app/views.py:42
 msgid "All posts"
 msgstr "Все публикации"
 
-#: app/views.py:54
+#: app/views.py:60
 msgid "Your post is now live!"
 msgstr "Пост упешно создан!"
 
-#: app/templates/_navbar.html:12 app/views.py:65
+#: app/templates/_navbar.html:12 app/views.py:71
 msgid "My feed"
 msgstr "Моя лента"
 
-#: app/templates/edit_profile.html:5 app/views.py:156
+#: app/templates/edit_profile.html:5 app/views.py:162
 msgid "Edit Profile"
 msgstr "Редактировать профиль"
 
-#: app/templates/reset_password_request.html:4 app/views.py:210
+#: app/templates/reset_password_request.html:4 app/views.py:216
 msgid "Reset Password"
 msgstr "Сбросить пароль"
 
@@ -186,9 +194,17 @@ msgstr "Профиль"
 msgid "Logout"
 msgstr "Выход"
 
+#: app/templates/_post.html:33
+msgid "Translate"
+msgstr "Перевести"
+
 #: app/templates/base.html:15
 msgid "Welcome to RGBlog"
 msgstr "Добро пожаловать в RGBlog"
+
+#: app/templates/base.html:58
+msgid "Error: Could not contact server."
+msgstr "Ошибка: отсутвует связь с сервером"
 
 #: app/templates/index.html:8
 #, python-format
