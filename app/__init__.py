@@ -3,6 +3,7 @@ import os
 from logging.handlers import RotatingFileHandler, SMTPHandler
 
 from app.config import Config
+
 from flask import Flask, request
 from flask_babel import Babel
 from flask_babel import lazy_gettext as _l
@@ -19,6 +20,9 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+from app.errors import bp as errors_bp
+app.register_blueprint(errors_bp)
+
 login = LoginManager(app)
 login.login_view = 'login'
 login.login_message = _l('Please log in to access this page.')
@@ -28,7 +32,8 @@ bootstrap = Bootstrap(app)
 moment = Moment(app)
 babel = Babel(app)
 
-from app import errors, models, views
+
+from app import models, views
 
 if not app.debug:
     if app.config['MAIL_SERVER']:
