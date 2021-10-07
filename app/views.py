@@ -233,7 +233,6 @@ def reset_password(token):
 
 
 @app.route('/translate', methods=['POST'])
-@login_required
 def translate_text():
     app.logger.info(request)
     return jsonify(

@@ -46,7 +46,7 @@
                 {{ moment.lang(get_locale()) }}
                 {% block scripts %}
                     <script>
-                        function translate(sourceElem, destElem, sourceLang, destLang) {
+                        const translate = (sourceElem, destElem, sourceLang, destLang) => {
                             $(destElem).html('<img src="{{ url_for('static', filename='img/loading.gif') }}">');
                             $.post('/translate', {
                                 text: $(sourceElem).text(),
