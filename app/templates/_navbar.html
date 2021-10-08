@@ -13,10 +13,10 @@
         </ul>
         <ul class="navbar-nav navbar-right">
             {% if current_user.is_anonymous %}
-                {{ render_nav_item('login', _("Login")) }}
+                {{ render_nav_item('auth.login', _("Login")) }}
             {% else %}
                 {{ render_nav_item('user', _("Profile"), username=current_user.username) }}
-                {{ render_nav_item('logout', _("Logout")) }}
+                {{ render_nav_item('auth.logout', _("Logout")) }}
             {% endif %}
         </ul>
     </div>

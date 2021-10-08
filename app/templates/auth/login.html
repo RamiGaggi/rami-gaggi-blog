@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block app_content %}
+    <h1>{{ _("Sign In") }}</h1>
+        {{ render_form(form) }}
+    <div class="card my-3">
+        <div class="card-body">
+            <p>{{ _("New User") }}? <a class="badge badge-light" href="{{ url_for('auth.register') }}"> {{ _("Click to Register") }}!</a></p>
+            <p>{{ _("Forgot Your Password") }}?<a class="badge badge-light" href="{{ url_for('auth.reset_password_request') }}"> {{ _("Click to Reset It") }}!</a></p>
+        </div>
+    </div>
+{% endblock %}
