@@ -1,31 +1,32 @@
 from datetime import datetime
 
-from app import app, db, messages
-from app.forms import EditProfileForm, EmptyForm, PostForm
+from app import db, messages
+from app.core import bp
+from app.core.forms import EditProfileForm, EmptyForm, PostForm
 from app.models import Post, User
 from app.my_utils import redirect_to
 from app.translate import translate
-from flask import flash, jsonify, redirect, render_template, request
+from flask import current_app, flash, jsonify, redirect, render_template, request
 from flask.helpers import url_for
 from flask_babel import _
 from flask_login import current_user, login_required
 from langdetect import LangDetectException, detect
 
 
-@app.before_request
+@bp.before_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/index', methods=['GET', 'POST'])
+@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/index', methods=['GET', 'POST'])
 def index():
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page,
-        per_page=app.config['POSTS_PER_PAGE'],
+        per_page=current_app.config['POSTS_PER_PAGE'],
         error_out=False,
     )
     return render_template(
@@ -36,7 +37,7 @@ def index():
     )
 
 
-@app.route('/explore', methods=['GET', 'POST'])
+@bp.route('/explore', methods=['GET', 'POST'])
 @login_required
 def explore():
     form = PostForm()
@@ -54,7 +55,7 @@ def explore():
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(
         page=page,
-        per_page=app.config['POSTS_PER_PAGE'],
+        per_page=current_app.config['POSTS_PER_PAGE'],
         error_out=False,
     )
     return render_template(
@@ -66,7 +67,7 @@ def explore():
     )
 
 
-@app.route('/user/<username>')
+@bp.route('/user/<username>')
 @login_required
 def user(username):
     form = EmptyForm()
@@ -74,7 +75,7 @@ def user(username):
     page = request.args.get('page', 1, type=int)
     posts = user.posts.paginate(
         page=page,
-        per_page=app.config['POSTS_PER_PAGE'],
+        per_page=current_app.config['POSTS_PER_PAGE'],
         error_out=False,
     )
 
@@ -87,7 +88,7 @@ def user(username):
     )
 
 
-@app.route('/edit_profile', methods=['GET', 'POST'])
+@bp.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
@@ -103,7 +104,7 @@ def edit_profile():
     return render_template('edit_profile.html', title=_('Edit Profile'), form=form)
 
 
-@app.route('/follow/<username>', methods=['POST'])
+@bp.route('/follow/<username>', methods=['POST'])
 @login_required
 def follow(username):
     form = EmptyForm()
@@ -122,7 +123,7 @@ def follow(username):
     return redirect_to('index')
 
 
-@app.route('/unfollow/<username>', methods=['POST'])
+@bp.route('/unfollow/<username>', methods=['POST'])
 @login_required
 def unfollow(username):
     form = EmptyForm()
@@ -143,9 +144,9 @@ def unfollow(username):
     return redirect_to('index')
 
 
-@app.route('/translate', methods=['POST'])
+@bp.route('/translate', methods=['POST'])
 def translate_text():
-    app.logger.info(request)
+    current_app.logger.info(request)
     return jsonify(
         {
             'text': translate(

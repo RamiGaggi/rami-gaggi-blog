@@ -1,4 +1,3 @@
-
 from flask import redirect, url_for
 from werkzeug.wrappers import Response
 
