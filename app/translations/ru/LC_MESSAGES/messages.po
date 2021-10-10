@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-06 21:50+0300\n"
+"POT-Creation-Date: 2021-10-10 23:15+0300\n"
 "PO-Revision-Date: 2021-10-02 17:18+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,65 +19,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: app/__init__.py:24
+#: app/__init__.py:26
 msgid "Please log in to access this page."
 msgstr "Пожалуйста войдите для доступа к странице"
-
-#: app/forms.py:10 app/forms.py:17 app/forms.py:37
-msgid "Username"
-msgstr "Имя пользователя"
-
-#: app/forms.py:11 app/forms.py:19 app/forms.py:70
-msgid "Password"
-msgstr "Пароль"
-
-#: app/forms.py:12
-msgid "Remember Me"
-msgstr "Запомнить меня"
-
-#: app/forms.py:13 app/templates/login.html:5
-msgid "Sign In"
-msgstr "Войти"
-
-#: app/forms.py:18
-msgid "Email"
-msgstr "\"Эл. адрес, email\""
-
-#: app/forms.py:21 app/forms.py:72
-msgid "Repeat Password"
-msgstr "Повторите пароль"
-
-#: app/forms.py:23 app/templates/register.html:4 app/views.py:125
-msgid "Register"
-msgstr "Регистрация"
-
-#: app/forms.py:38 app/templates/user.html:9
-msgid "About me"
-msgstr "Обо мне"
-
-#: app/forms.py:39
-msgid "Edit"
-msgstr "Редактировать"
-
-#: app/forms.py:49
-msgid "Please use a different username."
-msgstr "Пожалуйста, введите другое имя пользователя"
-
-#: app/forms.py:53 app/forms.py:66
-msgid "Submit"
-msgstr "Отправить"
-
-#: app/forms.py:58
-msgid "Write your post here"
-msgstr "Напишите здесь свою публикацию"
-
-#: app/forms.py:61
-msgid "Create Post"
-msgstr "Создать"
-
-#: app/forms.py:74
-msgid "Reset"
-msgstr "Сбросить"
 
 #: app/messages.py:4
 msgid "Invalid username or password"
@@ -138,45 +82,93 @@ msgstr "Проверьте свой e-mail для"
 msgid "Your password has been reset"
 msgstr "Ваш пароль был сброшен"
 
-#: app/translate.py:8
+#: app/translate.py:9
 msgid "Error: the translation service is not configured."
 msgstr "Ошибка: сервис не настроен"
 
-#: app/translate.py:20
+#: app/translate.py:22
 msgid "Error: the translation service failed."
 msgstr "Ошибка: попытка перевода не удалась"
 
-#: app/views.py:42
-msgid "All posts"
-msgstr "Все публикации"
+#: app/auth/email.py:9
+msgid "[RamiGaggiBlog] Reset Your Password"
+msgstr "[RamiGaggiBlog] Сбросьте ваш пароль"
 
-#: app/views.py:60
-msgid "Your post is now live!"
-msgstr "Пост упешно создан!"
+#: app/auth/forms.py:10 app/auth/forms.py:17 app/core/forms.py:9
+msgid "Username"
+msgstr "Имя пользователя"
 
-#: app/templates/_navbar.html:12 app/views.py:71
-msgid "My feed"
-msgstr "Моя лента"
+#: app/auth/forms.py:11 app/auth/forms.py:19 app/auth/forms.py:42
+msgid "Password"
+msgstr "Пароль"
 
-#: app/templates/edit_profile.html:5 app/views.py:162
-msgid "Edit Profile"
-msgstr "Редактировать профиль"
+#: app/auth/forms.py:12
+msgid "Remember Me"
+msgstr "Запомнить меня"
 
-#: app/templates/reset_password_request.html:4 app/views.py:216
+#: app/auth/forms.py:13 app/templates/auth/login.html:5
+msgid "Sign In"
+msgstr "Войти"
+
+#: app/auth/forms.py:18
+msgid "Email"
+msgstr "\"Эл. адрес, email\""
+
+#: app/auth/forms.py:21 app/auth/forms.py:44
+msgid "Repeat Password"
+msgstr "Повторите пароль"
+
+#: app/auth/forms.py:23 app/auth/views.py:60 app/templates/auth/register.html:4
+msgid "Register"
+msgstr "Регистрация"
+
+#: app/auth/forms.py:38 app/core/forms.py:25
+msgid "Submit"
+msgstr "Отправить"
+
+#: app/auth/forms.py:46
+msgid "Reset"
+msgstr "Сбросить"
+
+#: app/auth/views.py:74 app/templates/auth/reset_password_request.html:4
 msgid "Reset Password"
 msgstr "Сбросить пароль"
 
-#: app/templates/404.html:4
-msgid "Page Not Found"
-msgstr "Страница не найдена"
+#: app/core/forms.py:10 app/templates/user.html:9
+msgid "About me"
+msgstr "Обо мне"
 
-#: app/templates/500.html:4
-msgid "An unexpected error has occurred"
-msgstr "Произошла непредвиденная ошибка"
+#: app/core/forms.py:11
+msgid "Edit"
+msgstr "Редактировать"
 
-#: app/templates/500.html:5
-msgid "The administrator has been notified. Sorry for the inconvenience!"
-msgstr "Мы уже разбираемся с данной проблемой. Извините за беспокойство!\""
+#: app/core/forms.py:21
+msgid "Please use a different username."
+msgstr "Пожалуйста, введите другое имя пользователя"
+
+#: app/core/forms.py:30
+msgid "Write your post here"
+msgstr "Напишите здесь свою публикацию"
+
+#: app/core/forms.py:33
+msgid "Create Post"
+msgstr "Создать"
+
+#: app/core/views.py:34
+msgid "All posts"
+msgstr "Все публикации"
+
+#: app/core/views.py:52
+msgid "Your post is now live!"
+msgstr "Пост упешно создан!"
+
+#: app/core/views.py:63 app/templates/_navbar.html:12
+msgid "My feed"
+msgstr "Моя лента"
+
+#: app/core/views.py:104 app/templates/edit_profile.html:5
+msgid "Edit Profile"
+msgstr "Редактировать профиль"
 
 #: app/templates/_navbar.html:11
 msgid "All topics"
@@ -215,26 +207,6 @@ msgstr "Привет, %(username)s"
 msgid "Hi, anon"
 msgstr "Добро пожаловать"
 
-#: app/templates/login.html:9
-msgid "New User"
-msgstr "Новый пользователь"
-
-#: app/templates/login.html:9
-msgid "Click to Register"
-msgstr "Кликните, чтобы зарегистрироваться"
-
-#: app/templates/login.html:10
-msgid "Forgot Your Password"
-msgstr "Забыли свой пароль"
-
-#: app/templates/login.html:10
-msgid "Click to Reset It"
-msgstr "Кликните для сброса пароля"
-
-#: app/templates/reset_password.html:5
-msgid "Reset Your Password"
-msgstr "Сброс пароля"
-
 #: app/templates/user.html:6
 msgid "User"
 msgstr "Пользователь"
@@ -262,4 +234,36 @@ msgstr "Отписаться"
 #: app/templates/user.html:23
 msgid "Follow"
 msgstr "Подписаться"
+
+#: app/templates/auth/login.html:9
+msgid "New User"
+msgstr "Новый пользователь"
+
+#: app/templates/auth/login.html:9
+msgid "Click to Register"
+msgstr "Кликните, чтобы зарегистрироваться"
+
+#: app/templates/auth/login.html:10
+msgid "Forgot Your Password"
+msgstr "Забыли свой пароль"
+
+#: app/templates/auth/login.html:10
+msgid "Click to Reset It"
+msgstr "Кликните для сброса пароля"
+
+#: app/templates/auth/reset_password.html:5
+msgid "Reset Your Password"
+msgstr "Сброс пароля"
+
+#: app/templates/errors/404.html:4
+msgid "Page Not Found"
+msgstr "Страница не найдена"
+
+#: app/templates/errors/500.html:4
+msgid "An unexpected error has occurred"
+msgstr "Произошла непредвиденная ошибка"
+
+#: app/templates/errors/500.html:5
+msgid "The administrator has been notified. Sorry for the inconvenience!"
+msgstr "Мы уже разбираемся с данной проблемой. Извините за беспокойство!\""
 
