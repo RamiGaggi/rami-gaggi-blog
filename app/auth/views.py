@@ -13,7 +13,7 @@ from werkzeug.urls import url_parse
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect_to('index')
+        return redirect_to('core.index')
 
     form = LoginForm()
     if form.validate_on_submit():
@@ -26,7 +26,7 @@ def login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
+            next_page = url_for('core.index')
 
         flash(messages.LOGIN)
         return redirect(next_page)
@@ -37,17 +37,17 @@ def login():
 @bp.route('/logout')
 def logout():
     if current_user.is_anonymous:
-        return redirect_to('index')
+        return redirect_to('core.index')
 
     logout_user()
     flash(messages.LOGOUT)
-    return redirect_to('index')
+    return redirect_to('core.index')
 
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect_to('index')
+        return redirect_to('core.index')
 
     form = RegistrationForm()
     if form.validate_on_submit():
@@ -63,7 +63,7 @@ def register():
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('core.index'))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()  # noqa: WPS442
@@ -77,10 +77,10 @@ def reset_password_request():
 @bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if current_user.is_authenticated:
-        return redirect_to('index')
+        return redirect_to('core.index')
     user = User.verify_reset_password_token(token)  # noqa: WPS442
     if not user:
-        return redirect_to('index')
+        return redirect_to('core.index')
     form = ResetPasswordForm()
     if form.validate_on_submit():
         user.set_password(form.password.data)

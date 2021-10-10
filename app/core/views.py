@@ -50,7 +50,7 @@ def explore():
         db.session.add(post)
         db.session.commit()
         flash(_('Your post is now live!'))
-        return redirect_to('explore')
+        return redirect_to('core.explore')
 
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(
@@ -97,7 +97,7 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash(messages.EDIT_PROFILE)
-        return redirect_to('edit_profile')
+        return redirect_to('core.edit_profile')
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
@@ -112,7 +112,7 @@ def follow(username):
         user = User.query.filter_by(username=username).first()  # noqa: WPS442
         if user is None:
             flash(messages.USERNAME_NOT_FOUND(username))
-            return redirect_to('index')
+            return redirect_to('core.index')
         if user == current_user:
             flash(messages.FOLLOW_YOURSELF)
             return redirect(url_for('user', username=username))
@@ -120,7 +120,7 @@ def follow(username):
         db.session.commit()
         flash(messages.FOLLOW(username))
         return redirect_to('user', username=username)
-    return redirect_to('index')
+    return redirect_to('core.index')
 
 
 @bp.route('/unfollow/<username>', methods=['POST'])
@@ -131,7 +131,7 @@ def unfollow(username):
         user = User.query.filter_by(username=username).first()  # noqa: WPS442
         if user is None:
             flash(messages.USERNAME_NOT_FOUND(username))
-            return redirect_to('index')
+            return redirect_to('core.index')
 
         if user == current_user:
             flash(messages.UNFOLLOW_YOURSELF)
@@ -141,7 +141,7 @@ def unfollow(username):
         db.session.commit()
         flash(messages.UNFOLLOW(username))
         return redirect_to('user', username=username)
-    return redirect_to('index')
+    return redirect_to('core.index')
 
 
 @bp.route('/translate', methods=['POST'])

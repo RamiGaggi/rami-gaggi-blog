@@ -40,7 +40,7 @@ app.register_blueprint(auth_bp, url_prefix='/auth')
 from app.core import bp as core_bp
 app.register_blueprint(core_bp)
 
-from app import models, views
+from app import models
 
 if not app.debug:
     if app.config['MAIL_SERVER']:

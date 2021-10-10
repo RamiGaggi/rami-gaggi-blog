@@ -8,14 +8,14 @@
 
     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-            {{ render_nav_item('index', _("All topics")) }}
-            {{ render_nav_item('explore', _("My feed")) }}
+            {{ render_nav_item('core.index', _("All topics")) }}
+            {{ render_nav_item('core.explore', _("My feed")) }}
         </ul>
         <ul class="navbar-nav navbar-right">
             {% if current_user.is_anonymous %}
                 {{ render_nav_item('auth.login', _("Login")) }}
             {% else %}
-                {{ render_nav_item('user', _("Profile"), username=current_user.username) }}
+                {{ render_nav_item('core.user', _("Profile"), username=current_user.username) }}
                 {{ render_nav_item('auth.logout', _("Logout")) }}
             {% endif %}
         </ul>
