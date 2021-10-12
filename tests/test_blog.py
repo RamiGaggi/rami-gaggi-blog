@@ -8,7 +8,7 @@ from app.models import Post, User
 
 class TestConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = "sqlite://"
 
 
 class UserModelCase(unittest.TestCase):
@@ -21,6 +21,7 @@ class UserModelCase(unittest.TestCase):
     def tearDown(self):
         db.session.remove()
         db.drop_all()
+        self.app_context.pop()
 
     def test_password_hashing(self):
         user = User(username='susan')
