@@ -24,21 +24,24 @@ class UserModelCase(unittest.TestCase):
         self.app_context.pop()
 
     def test_password_hashing(self):
-        user = User(username='susan')
-        user.set_password('cat')
-        self.assertFalse(user.check_password('dog'))
-        self.assertTrue(user.check_password('cat'))
+        user = User(username="susan")
+        user.set_password("cat")
+        self.assertFalse(user.check_password("dog"))
+        self.assertTrue(user.check_password("cat"))
 
     def test_avatar(self):
-        user = User(username='john', email='john@example.com')
+        user = User(username="john", email="john@example.com")
         self.assertEqual(
             user.avatar(128),
-            ('https://www.gravatar.com/avatar/d4c74594d841139328695756648b6bd6?d=identicon&s=128'),
+            (
+                "https://www.gravatar.com/avatar/"
+                "d4c74594d841139328695756648b6bd6?d=identicon&s=128"
+            ),
         )
 
     def test_follow(self):
-        user1 = User(username='john', email='john@example.com')
-        user2 = User(username='susan', email='susan@example.com')
+        user1 = User(username="john", email="john@example.com")
+        user2 = User(username="susan", email="susan@example.com")
         db.session.add(user1)
         db.session.add(user2)
         db.session.commit()
@@ -49,9 +52,9 @@ class UserModelCase(unittest.TestCase):
         db.session.commit()
         self.assertTrue(user1.is_following(user2))
         self.assertEqual(user1.followed.count(), 1)
-        self.assertEqual(user1.followed.first().username, 'susan')
+        self.assertEqual(user1.followed.first().username, "susan")
         self.assertEqual(user2.followers.count(), 1)
-        self.assertEqual(user2.followers.first().username, 'john')
+        self.assertEqual(user2.followers.first().username, "john")
 
         user1.unfollow(user2)
         db.session.commit()
@@ -60,30 +63,30 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(user2.followers.count(), 0)
 
     def test_follow_posts(self):
-        user1 = User(username='john', email='john@example.com')
-        user2 = User(username='susan', email='susan@example.com')
-        user3 = User(username='mary', email='mary@example.com')
-        user4 = User(username='david', email='david@example.com')
+        user1 = User(username="john", email="john@example.com")
+        user2 = User(username="susan", email="susan@example.com")
+        user3 = User(username="mary", email="mary@example.com")
+        user4 = User(username="david", email="david@example.com")
         db.session.add_all([user1, user2, user3, user4])
 
         now = datetime.utcnow()
         post1 = Post(
-            body='post from john',
+            body="post from john",
             author=user1,
             timestamp=now + timedelta(seconds=1),
         )
         post2 = Post(
-            body='post from susan',
+            body="post from susan",
             author=user2,
             timestamp=now + timedelta(seconds=4),
         )
         post3 = Post(
-            body='post from mary',
+            body="post from mary",
             author=user3,
             timestamp=now + timedelta(seconds=3),
         )
         post4 = Post(
-            body='post from david',
+            body="post from david",
             author=user4,
             timestamp=now + timedelta(seconds=2),
         )
@@ -106,5 +109,5 @@ class UserModelCase(unittest.TestCase):
         self.assertEqual(followed_posts4, [post4])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main(verbosity=2)

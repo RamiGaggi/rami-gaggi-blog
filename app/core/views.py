@@ -20,24 +20,24 @@ def before_request():
         db.session.commit()
 
 
-@bp.route('/', methods=['GET', 'POST'])
-@bp.route('/index', methods=['GET', 'POST'])
+@bp.route("/", methods=["GET", "POST"])
+@bp.route("/index", methods=["GET", "POST"])
 def index():
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get("page", 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page,
-        per_page=current_app.config['POSTS_PER_PAGE'],
+        per_page=current_app.config["POSTS_PER_PAGE"],
         error_out=False,
     )
     return render_template(
-        'index.html',
-        title=_('All posts'),
+        "index.html",
+        title=_("All posts"),
         posts=posts.items,
         pagination=posts,
     )
 
 
-@bp.route('/explore', methods=['GET', 'POST'])
+@bp.route("/explore", methods=["GET", "POST"])
 @login_required
 def explore():
     form = PostForm()
@@ -45,42 +45,42 @@ def explore():
         try:
             language = detect(form.post.data)
         except LangDetectException:
-            language = ''
+            language = ""
         post = Post(body=form.post.data, author=current_user, language=language)
         db.session.add(post)
         db.session.commit()
-        flash(_('Your post is now live!'))
-        return redirect_to('core.explore')
+        flash(_("Your post is now live!"))
+        return redirect_to("core.explore")
 
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get("page", 1, type=int)
     posts = current_user.followed_posts().paginate(
         page=page,
-        per_page=current_app.config['POSTS_PER_PAGE'],
+        per_page=current_app.config["POSTS_PER_PAGE"],
         error_out=False,
     )
     return render_template(
-        'index.html',
-        title=_('My feed'),
+        "index.html",
+        title=_("My feed"),
         form=form,
         posts=posts.items,
         pagination=posts,
     )
 
 
-@bp.route('/user/<username>')
+@bp.route("/user/<username>")
 @login_required
 def user(username):
     form = EmptyForm()
     user = User.query.filter_by(username=username).first_or_404()  # noqa: WPS442
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get("page", 1, type=int)
     posts = user.posts.paginate(
         page=page,
-        per_page=current_app.config['POSTS_PER_PAGE'],
+        per_page=current_app.config["POSTS_PER_PAGE"],
         error_out=False,
     )
 
     return render_template(
-        'user.html',
+        "user.html",
         user=user,
         posts=posts.items,
         form=form,
@@ -88,7 +88,7 @@ def user(username):
     )
 
 
-@bp.route('/edit_profile', methods=['GET', 'POST'])
+@bp.route("/edit_profile", methods=["GET", "POST"])
 @login_required
 def edit_profile():
     form = EditProfileForm(current_user.username)
@@ -97,14 +97,14 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash(messages.EDIT_PROFILE)
-        return redirect_to('core.edit_profile')
-    elif request.method == 'GET':
+        return redirect_to("core.edit_profile")
+    elif request.method == "GET":
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title=_('Edit Profile'), form=form)
+    return render_template("edit_profile.html", title=_("Edit Profile"), form=form)
 
 
-@bp.route('/follow/<username>', methods=['POST'])
+@bp.route("/follow/<username>", methods=["POST"])
 @login_required
 def follow(username):
     form = EmptyForm()
@@ -112,18 +112,18 @@ def follow(username):
         user = User.query.filter_by(username=username).first()  # noqa: WPS442
         if user is None:
             flash(messages.USERNAME_NOT_FOUND(username))
-            return redirect_to('core.index')
+            return redirect_to("core.index")
         if user == current_user:
             flash(messages.FOLLOW_YOURSELF)
-            return redirect(url_for('user', username=username))
+            return redirect(url_for("user", username=username))
         current_user.follow(user)
         db.session.commit()
         flash(messages.FOLLOW(username))
-        return redirect_to('user', username=username)
-    return redirect_to('core.index')
+        return redirect_to("user", username=username)
+    return redirect_to("core.index")
 
 
-@bp.route('/unfollow/<username>', methods=['POST'])
+@bp.route("/unfollow/<username>", methods=["POST"])
 @login_required
 def unfollow(username):
     form = EmptyForm()
@@ -131,28 +131,28 @@ def unfollow(username):
         user = User.query.filter_by(username=username).first()  # noqa: WPS442
         if user is None:
             flash(messages.USERNAME_NOT_FOUND(username))
-            return redirect_to('core.index')
+            return redirect_to("core.index")
 
         if user == current_user:
             flash(messages.UNFOLLOW_YOURSELF)
-            return redirect_to('user', username=username)
+            return redirect_to("user", username=username)
 
         current_user.unfollow(user)
         db.session.commit()
         flash(messages.UNFOLLOW(username))
-        return redirect_to('user', username=username)
-    return redirect_to('core.index')
+        return redirect_to("user", username=username)
+    return redirect_to("core.index")
 
 
-@bp.route('/translate', methods=['POST'])
+@bp.route("/translate", methods=["POST"])
 def translate_text():
     current_app.logger.info(request)
     return jsonify(
         {
-            'text': translate(
-                request.form['text'],
-                request.form['source_language'],
-                request.form['dest_language'],
+            "text": translate(
+                request.form["text"],
+                request.form["source_language"],
+                request.form["dest_language"],
             ),
         },
     )
