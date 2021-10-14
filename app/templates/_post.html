@@ -34,5 +34,7 @@
         </span>
     {% endif %}
     {% endfor %}
-        {{ render_pagination(pagination) }}
+        {% if pagination %}
+            {{ render_pagination(pagination) }}
+        {% endif %}
 </div>

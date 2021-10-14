@@ -1,4 +1,5 @@
 from app.models import User
+from flask import request
 from flask_babel import lazy_gettext as _l  # noqa: WPS347, WPS111
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, TextAreaField
@@ -33,3 +34,14 @@ class PostForm(FlaskForm):
         validators=[DataRequired(), Length(min=1, max=10000)],
     )
     submit = SubmitField(_l("Create Post"))
+
+
+class SearchForm(FlaskForm):
+    q = StringField(_l("Search"), validators=[DataRequired()])  # noqa: WPS111
+
+    def __init__(self, *args, **kwargs):
+        if "formdata" not in kwargs:
+            kwargs["formdata"] = request.args
+        if "csrf_enabled" not in kwargs:
+            kwargs["csrf_enabled"] = False
+        super().__init__(*args, **kwargs)

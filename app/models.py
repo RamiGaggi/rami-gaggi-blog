@@ -4,6 +4,7 @@ from time import time
 
 import jwt
 from app import db, login
+from app.search import add_to_index, query_index, remove_from_index
 from flask import current_app
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -91,13 +92,60 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-class Post(db.Model):
+class SearchableMixin(object):
+    @classmethod
+    def search(cls, expression, page, per_page):
+        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        if total == 0:
+            return cls.query.filter_by(id=0), 0
+        when = []
+        for ind, _ in enumerate(ids):
+            when.append((ids[ind], ind))
+        return (
+            cls.query.filter(cls.id.in_(ids)).order_by(
+                db.case(when, value=cls.id)
+            ),  # noqa: WPS221
+            total,
+        )
+
+    @classmethod
+    def before_commit(cls, session):
+        session._changes = {
+            "add": list(session.new),
+            "update": list(session.dirty),
+            "delete": list(session.deleted),
+        }
+
+    @classmethod
+    def after_commit(cls, session):  # noqa: C901
+        for serach_obj in session._changes["add"]:
+            if isinstance(serach_obj, SearchableMixin):
+                add_to_index(serach_obj.__tablename__, serach_obj)
+        for serach_obj in session._changes["update"]:
+            if isinstance(serach_obj, SearchableMixin):
+                add_to_index(serach_obj.__tablename__, serach_obj)
+        for serach_obj in session._changes["delete"]:
+            if isinstance(serach_obj, SearchableMixin):
+                remove_from_index(serach_obj.__tablename__, serach_obj)
+        session._changes = None
+
+    @classmethod
+    def reindex(cls):
+        for serach_obj in cls.query:
+            add_to_index(cls.__tablename__, serach_obj)
+
+
+db.event.listen(db.session, "before_commit", SearchableMixin.before_commit)
+db.event.listen(db.session, "after_commit", SearchableMixin.after_commit)
+
+
+class Post(SearchableMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(140))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     language = db.Column(db.String(5))
-    searchable = ['body']
+    searchable = ["body"]
 
     def __repr__(self):
         return f"<Post {self.body}>"

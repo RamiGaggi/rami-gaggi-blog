@@ -1,23 +1,25 @@
 from datetime import datetime
 
-from app import db, messages
+from app import db, get_locale, messages
 from app.core import bp
-from app.core.forms import EditProfileForm, EmptyForm, PostForm
+from app.core.forms import EditProfileForm, EmptyForm, PostForm, SearchForm
 from app.models import Post, User
 from app.my_utils import redirect_to
 from app.translate import translate
-from flask import current_app, flash, jsonify, redirect, render_template, request
+from flask import current_app, flash, g, jsonify, redirect, render_template, request
 from flask.helpers import url_for
 from flask_babel import _
 from flask_login import current_user, login_required
 from langdetect import LangDetectException, detect
 
 
-@bp.before_request
+@bp.before_app_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+        g.search_form = SearchForm()
+    g.locale = str(get_locale())
 
 
 @bp.route("/", methods=["GET", "POST"])
@@ -155,4 +157,23 @@ def translate_text():
                 request.form["dest_language"],
             ),
         },
+    )
+
+
+@bp.route("/search")
+@login_required
+def search():
+    if not g.search_form.validate():
+        return redirect(url_for("core.explore"))
+    page = request.args.get("page", 1, type=int)
+    posts, total = Post.search(
+        g.search_form.q.data, page, current_app.config["POSTS_PER_PAGE"]
+    )
+    post_paginate = posts.paginate(
+        page=page,
+        per_page=current_app.config["POSTS_PER_PAGE"],
+        error_out=False,
+    )
+    return render_template(
+        "search.html", title=_("Search"), posts=posts, pagination=post_paginate
     )
